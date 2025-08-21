@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF--8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Google Bird</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -115,137 +115,164 @@
                 High Scores
             </h2>
             <ul id="high-score-list" class="space-y-3 overflow-y-auto flex-grow scrollbar-thin pr-2">
-                <!-- Sample Data -->
-                <li class="flex items-center justify-between p-3 rounded-lg bg-gray-50 transition hover:bg-gray-100">
-                    <div class="flex items-center min-w-0">
-                        <span class="font-bold text-g-blue w-8 flex-shrink-0">1.</span>
-                        <img src="https://placehold.co/40x40/4285F4/FFFFFF?text=P" alt="avatar" class="rounded-full w-10 h-10 mr-3 border-2 border-white ring-2 ring-blue-200 flex-shrink-0">
-                        <span class="font-medium text-gray-700 truncate">pichais_with_a_very_long_ldap</span>
-                    </div>
-                    <span class="font-bold text-lg text-g-blue ml-4 flex-shrink-0">142</span>
-                </li>
-                 <li class="flex items-center justify-between p-3 rounded-lg bg-gray-50 transition hover:bg-gray-100">
-                    <div class="flex items-center min-w-0">
-                        <span class="font-bold text-g-red w-8 flex-shrink-0">2.</span>
-                        <img src="https://placehold.co/40x40/DB4437/FFFFFF?text=R" alt="avatar" class="rounded-full w-10 h-10 mr-3 border-2 border-white ring-2 ring-red-200 flex-shrink-0">
-                        <span class="font-medium text-gray-700 truncate">ruthp</span>
-                    </div>
-                    <span class="font-bold text-lg text-g-red ml-4 flex-shrink-0">110</span>
-                </li>
-                 <li class="flex items-center justify-between p-3 rounded-lg bg-gray-50 transition hover:bg-gray-100">
-                    <div class="flex items-center min-w-0">
-                        <span class="font-bold text-g-green w-8 flex-shrink-0">3.</span>
-                        <img src="https://placehold.co/40x40/0F9D58/FFFFFF?text=K" alt="avatar" class="rounded-full w-10 h-10 mr-3 border-2 border-white ring-2 ring-green-200 flex-shrink-0">
-                        <span class="font-medium text-gray-700 truncate">kentw</span>
-                    </div>
-                    <span class="font-bold text-lg text-g-green ml-4 flex-shrink-0">98</span>
-                </li>
-                <li class="flex items-center justify-between p-3 rounded-lg bg-gray-50 transition hover:bg-gray-100">
-                    <div class="flex items-center min-w-0">
-                        <span class="font-bold text-gray-500 w-8 flex-shrink-0">4.</span>
-                        <img src="https://placehold.co/40x40/757575/FFFFFF?text=U" alt="avatar" class="rounded-full w-10 h-10 mr-3 flex-shrink-0">
-                        <span class="font-medium text-gray-700 truncate">ursH</span>
-                    </div>
-                    <span class="font-bold text-lg text-gray-600 ml-4 flex-shrink-0">85</span>
-                </li>
-                 <li class="flex items-center justify-between p-3 rounded-lg bg-gray-50 transition hover:bg-gray-100">
-                    <div class="flex items-center min-w-0">
-                        <span class="font-bold text-gray-500 w-8 flex-shrink-0">5.</span>
-                         <img src="https://placehold.co/40x40/757575/FFFFFF?text=L" alt="avatar" class="rounded-full w-10 h-10 mr-3 flex-shrink-0">
-                        <span class="font-medium text-gray-700 truncate">larryp</span>
-                    </div>
-                    <span class="font-bold text-lg text-gray-600 ml-4 flex-shrink-0">72</span>
-                </li>
-                 <li class="flex items-center justify-between p-3 rounded-lg bg-gray-50 transition hover:bg-gray-100">
-                    <div class="flex items-center min-w-0">
-                        <span class="font-bold text-gray-500 w-8 flex-shrink-0">6.</span>
-                         <img src="https://placehold.co/40x40/757575/FFFFFF?text=S" alt="avatar" class="rounded-full w-10 h-10 mr-3 flex-shrink-0">
-                        <span class="font-medium text-gray-700 truncate">sergeyb</span>
-                    </div>
-                    <span class="font-bold text-lg text-gray-600 ml-4 flex-shrink-0">68</span>
-                </li>
+                <!-- High scores will be loaded here dynamically -->
             </ul>
         </div>
     </div>
 
     <script>
-        // UI Elements
+        // --- CONFIGURATION ---
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbz0iKZO3ilwAxC3XqLzj4aKPJVfoC8I6gHa6MvD6zZIPxJvQC9U9pDcR1X2dXR3Rl/exec';
+
+        // --- UI ELEMENTS ---
         const startScreen = document.getElementById('start-screen');
         const ldapInput = document.getElementById('ldap-input');
         const startButton = document.getElementById('start-button');
         const gameCanvas = document.getElementById('game-canvas');
+        const highScoreList = document.getElementById('high-score-list');
         const ctx = gameCanvas.getContext('2d');
 
-        // Game State
+        // --- GAME STATE ---
         let gameActive = false;
         let gameOver = false;
         let score = 0;
         let frame = 0;
         let ldap = '';
 
-        // Game Constants
+        // --- GAME CONSTANTS ---
         const BIRD_RADIUS = 20;
         const GRAVITY = 0.5;
         const LIFT = -8;
         const PIPE_WIDTH = 80;
         const PIPE_SPACING = 350;
-        const MIN_PIPE_HEIGHT = 75; // Prevents pipes from being too short
-        const GOOGLE_COLORS = ['#0F9D58', '#DB4437', '#F4B400']; // Green, Red, Yellow for pipes
+        const MIN_PIPE_HEIGHT = 75;
+        const GOOGLE_COLORS = ['#0F9D58', '#DB4437', '#F4B400'];
         
-        // Difficulty variables
+        // --- DIFFICULTY VARIABLES ---
         let pipeSpeed = 1.8; 
         let pipeGap = 240;
         
-        // Game Objects
+        // --- GAME OBJECTS ---
         let bird = { x: 150, y: 150, velocity: 0 };
         let pipes = [];
 
-        // UI Logic
-        ldapInput.addEventListener('input', () => {
-            if (ldapInput.value.trim() !== '') {
-                startButton.disabled = false;
-            } else {
-                startButton.disabled = true;
+        // --- HIGH SCORE LOGIC ---
+
+        async function fetchHighScores() {
+            highScoreList.innerHTML = '<li class="text-center text-gray-500 p-4">Loading scores...</li>';
+            try {
+                const response = await fetch(SCRIPT_URL);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    updateHighScoreUI(result.data);
+                } else {
+                    highScoreList.innerHTML = `<li class="text-center text-red-500 p-4">Error: ${result.error || 'Failed to load scores.'}</li>`;
+                }
+            } catch (error) {
+                console.error('Error fetching high scores:', error);
+                highScoreList.innerHTML = '<li class="text-center text-red-500 p-4">Could not connect to the server.</li>';
             }
+        }
+
+        function updateHighScoreUI(scores) {
+            highScoreList.innerHTML = ''; // Clear previous list
+            if (scores.length === 0) {
+                highScoreList.innerHTML = '<li class="text-center text-gray-500 p-4">No scores yet. Be the first!</li>';
+                return;
+            }
+
+            const rankColors = ['text-g-blue', 'text-g-red', 'text-g-green'];
+            const ringColors = ['ring-blue-200', 'ring-red-200', 'ring-green-200'];
+            const avatarColors = ['4285F4', 'DB4437', '0F9D58'];
+
+            scores.forEach((item, index) => {
+                const rank = index + 1;
+                const rankColor = rank <= 3 ? rankColors[index] : 'text-gray-500';
+                const ringColor = rank <= 3 ? ringColors[index] : 'ring-gray-200';
+                const avatarColor = rank <= 3 ? avatarColors[index] : '757575';
+                const firstLetter = (item.ldap || ' ').charAt(0).toUpperCase();
+
+                const listItem = `
+                    <li class="flex items-center justify-between p-3 rounded-lg bg-gray-50 transition hover:bg-gray-100">
+                        <div class="flex items-center min-w-0">
+                            <span class="font-bold ${rankColor} w-8 flex-shrink-0">${rank}.</span>
+                            <img src="https://placehold.co/40x40/${avatarColor}/FFFFFF?text=${firstLetter}" alt="avatar" class="rounded-full w-10 h-10 mr-3 border-2 border-white ring-2 ${ringColor} flex-shrink-0">
+                            <span class="font-medium text-gray-700 truncate">${item.ldap}</span>
+                        </div>
+                        <span class="font-bold text-lg ${rankColor} ml-4 flex-shrink-0">${item.score}</span>
+                    </li>`;
+                highScoreList.innerHTML += listItem;
+            });
+        }
+        
+        async function saveScore(playerLdap, playerScore) {
+            // Only save scores greater than 0
+            if (playerScore <= 0) {
+                await fetchHighScores();
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    // Removed mode: 'no-cors' to allow reading the response
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8', // Required for this type of Apps Script POST
+                    },
+                    body: JSON.stringify({ ldap: playerLdap, score: playerScore }),
+                });
+                // Since Apps Script redirects, we can't easily read the response,
+                // but completing the request is enough. We'll fetch scores after.
+            } catch (error) {
+                console.error('Error saving score:', error);
+            } finally {
+                 // Add a small delay before fetching scores to give the spreadsheet time to update
+                setTimeout(() => {
+                    fetchHighScores();
+                }, 1500); // Increased delay slightly for reliability
+            }
+        }
+
+
+        // --- UI & GAME START ---
+
+        ldapInput.addEventListener('input', () => {
+            startButton.disabled = ldapInput.value.trim() === '';
         });
 
         startButton.addEventListener('click', () => {
             ldap = ldapInput.value.trim();
-            if (ldap) {
-                startGame();
-            }
+            if (ldap) startGame();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchHighScores();
         });
 
         function startGame() {
             startScreen.classList.add('hidden');
             gameCanvas.classList.remove('hidden');
             
-            // Resize canvas to fit its container
             const container = gameCanvas.parentElement;
             gameCanvas.width = container.clientWidth;
             gameCanvas.height = container.clientHeight;
             
-            // Reset game state
-            gameActive = false; // Game won't be active until countdown is over
+            gameActive = false;
             gameOver = false;
             score = 0;
             frame = 0;
-            pipeSpeed = 1.8; // Reset difficulty
-            pipeGap = 240; // Reset pipe gap
+            pipeSpeed = 1.8;
+            pipeGap = 240;
             bird = { x: 150, y: gameCanvas.height / 2, velocity: 0 };
             pipes = [];
             
-            // Add initial pipe
             addPipe();
-            
-            // Draw the very first frame so the player sees the board
             drawStaticFrame();
-            
-            // Start the countdown, which will then start the game loop
             runCountdown(3);
         }
 
-        // Draws the game state without updating positions
         function drawStaticFrame() {
             ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
             drawPipes();
@@ -253,17 +280,14 @@
             drawScore();
         }
 
-        // New function for countdown
         function runCountdown(count) {
             if (count < 0) {
                 gameActive = true;
-                gameLoop(); // Start the game loop AFTER the countdown
+                gameLoop();
                 return;
             }
 
-            // Redraw the static frame each second to clear the old number
             drawStaticFrame();
-
             const text = count === 0 ? "GO!" : count;
             ctx.fillStyle = 'rgba(32, 33, 36, 0.8)';
             ctx.textAlign = 'center';
@@ -273,103 +297,51 @@
             setTimeout(() => runCountdown(count - 1), 1000);
         }
 
-        // Game Controls
+        // --- GAME CONTROLS ---
         function flap() {
-            if (gameActive && !gameOver) {
-                bird.velocity = LIFT;
-            }
+            if (gameActive && !gameOver) bird.velocity = LIFT;
         }
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && gameActive) {
-                flap();
-            }
-        });
-        gameCanvas.addEventListener('click', () => {
-            if (gameActive) {
-                flap();
-            }
-        });
+        document.addEventListener('keydown', (e) => { if (e.code === 'Space' && gameActive) flap(); });
+        gameCanvas.addEventListener('click', () => { if (gameActive) flap(); });
 
+        // --- GAME LOGIC ---
 
-        // Pipe Management
         function addPipe() {
-            // Ensure the gap is always playable
             const topHeight = Math.random() * (gameCanvas.height - pipeGap - (MIN_PIPE_HEIGHT * 2)) + MIN_PIPE_HEIGHT;
             const color = GOOGLE_COLORS[Math.floor(Math.random() * GOOGLE_COLORS.length)];
-            pipes.push({
-                x: gameCanvas.width,
-                topHeight: topHeight,
-                color: color,
-                passed: false
-            });
+            pipes.push({ x: gameCanvas.width, topHeight: topHeight, color: color, passed: false });
         }
         
         function updatePipes() {
-            // Add new pipe based on speed
-            if (frame % Math.floor(PIPE_SPACING / pipeSpeed) === 0) { 
-                 addPipe();
-            }
+            if (frame % Math.floor(PIPE_SPACING / pipeSpeed) === 0) addPipe();
             
-            // Move pipes and check score
             for (let i = pipes.length - 1; i >= 0; i--) {
-                pipes[i].x -= pipeSpeed; // Use dynamic pipe speed
+                pipes[i].x -= pipeSpeed;
                 
                 if (pipes[i].x + PIPE_WIDTH < bird.x && !pipes[i].passed) {
                     score++;
-                    // Increase difficulty every 5 points
                     if (score > 0 && score % 5 === 0) {
-                        pipeSpeed += 0.15; // Gently increase speed
-                        if (pipeGap > 180) {
-                           pipeGap -= 8; // Make the gap smaller
-                        }
+                        pipeSpeed += 0.15;
+                        if (pipeGap > 180) pipeGap -= 8;
                     }
                     pipes[i].passed = true;
                 }
 
-                if (pipes[i].x + PIPE_WIDTH < 0) {
-                    pipes.splice(i, 1);
-                }
+                if (pipes[i].x + PIPE_WIDTH < 0) pipes.splice(i, 1);
             }
         }
         
-        function drawPipes() {
-            pipes.forEach(pipe => {
-                ctx.fillStyle = pipe.color;
-                // Top pipe
-                ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.topHeight);
-                // Bottom pipe
-                ctx.fillRect(pipe.x, pipe.topHeight + pipeGap, PIPE_WIDTH, gameCanvas.height - pipe.topHeight - pipeGap);
-            });
-        }
-        
-        // Bird Management
         function updateBird() {
             bird.velocity += GRAVITY;
             bird.y += bird.velocity;
-            
-            // Prevent bird from going off-screen top
             if (bird.y - BIRD_RADIUS < 0) {
                 bird.y = BIRD_RADIUS;
                 bird.velocity = 0;
             }
         }
-        
-        function drawBird() {
-            ctx.beginPath();
-            ctx.arc(bird.x, bird.y, BIRD_RADIUS, 0, Math.PI * 2);
-            ctx.fillStyle = '#4285F4'; // Google Blue
-            ctx.fill();
-            ctx.closePath();
-        }
 
-        // Collision Detection
         function checkCollisions() {
-            // Ground collision
-            if (bird.y + BIRD_RADIUS > gameCanvas.height) {
-                return true;
-            }
-
-            // Pipe collision
+            if (bird.y + BIRD_RADIUS > gameCanvas.height) return true;
             for (let pipe of pipes) {
                 if (bird.x + BIRD_RADIUS > pipe.x && bird.x - BIRD_RADIUS < pipe.x + PIPE_WIDTH) {
                     if (bird.y - BIRD_RADIUS < pipe.topHeight || bird.y + BIRD_RADIUS > pipe.topHeight + pipeGap) {
@@ -379,79 +351,81 @@
             }
             return false;
         }
-        
-        // Game Over screen
-        function drawGameOver() {
-            gameActive = false; // Stop bird from being controlled
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
 
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'center';
-            ctx.font = 'bold 60px "Google Sans"';
-            ctx.fillText('Game Over', gameCanvas.width / 2, gameCanvas.height / 2 - 50);
+        // --- DRAWING FUNCTIONS ---
 
-            ctx.font = '30px "Google Sans"';
-            ctx.fillText(`Score: ${score}`, gameCanvas.width / 2, gameCanvas.height / 2 + 10);
-            
-            ctx.font = '20px "Google Sans"';
-            ctx.fillText('Click or Press Space to Restart', gameCanvas.width / 2, gameCanvas.height / 2 + 60);
-
-            // Add a one-time event listener to restart
-            const restart = () => {
-                document.removeEventListener('keydown', restartHandler);
-                gameCanvas.removeEventListener('click', restartHandler);
-                startGame();
-            };
-
-            const restartHandler = (e) => {
-                if (e.type === 'click' || (e.type === 'keydown' && e.code === 'Space')) {
-                    restart();
-                }
-            };
-            
-            setTimeout(() => { // Add a small delay to prevent accidental immediate restart
-                document.addEventListener('keydown', restartHandler);
-                gameCanvas.addEventListener('click', restartHandler);
-            }, 500);
+        function drawPipes() {
+            pipes.forEach(pipe => {
+                ctx.fillStyle = pipe.color;
+                ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.topHeight);
+                ctx.fillRect(pipe.x, pipe.topHeight + pipeGap, PIPE_WIDTH, gameCanvas.height - pipe.topHeight - pipeGap);
+            });
         }
-
+        
+        function drawBird() {
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, BIRD_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = '#4285F4';
+            ctx.fill();
+            ctx.closePath();
+        }
+        
         function drawScore() {
-            ctx.fillStyle = '#202124'; // Google's dark grey for text
+            ctx.fillStyle = '#202124';
             ctx.font = 'bold 40px "Google Sans"';
             ctx.textAlign = 'left';
             ctx.fillText(score, 30, 50);
         }
         
-        // Main Game Loop
+        function drawGameOver() {
+            gameActive = false;
+            saveScore(ldap, score);
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 60px "Google Sans"';
+            ctx.fillText('Game Over', gameCanvas.width / 2, gameCanvas.height / 2 - 50);
+            ctx.font = '30px "Google Sans"';
+            ctx.fillText(`Score: ${score}`, gameCanvas.width / 2, gameCanvas.height / 2 + 10);
+            ctx.font = '20px "Google Sans"';
+            ctx.fillText('Click or Press Space to Restart', gameCanvas.width / 2, gameCanvas.height / 2 + 60);
+
+            const restartHandler = (e) => {
+                if (e.type === 'click' || (e.type === 'keydown' && e.code === 'Space')) {
+                    document.removeEventListener('keydown', restartHandler);
+                    gameCanvas.removeEventListener('click', restartHandler);
+                    startGame();
+                }
+            };
+            
+            setTimeout(() => {
+                document.addEventListener('keydown', restartHandler);
+                gameCanvas.addEventListener('click', restartHandler);
+            }, 500);
+        }
+
+        // --- MAIN GAME LOOP ---
         function gameLoop() {
             if (gameOver) {
                 drawGameOver();
                 return;
             }
             
-            // Clear canvas
             ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-            
-            // Update game objects (no need to check for gameActive, as loop only runs when active)
             updateBird();
             updatePipes();
-            
-            // Draw game objects
             drawBird();
             drawPipes();
             drawScore();
 
-            // Check for game over condition
-            if (checkCollisions()) {
-                gameOver = true;
-            }
+            if (checkCollisions()) gameOver = true;
             
             frame++;
             requestAnimationFrame(gameLoop);
         }
 
-        // Handle window resizing
         window.addEventListener('resize', () => {
             if (gameActive && !gameOver) {
                  const container = gameCanvas.parentElement;
